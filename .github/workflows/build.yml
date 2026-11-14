@@ -1,22 +1,16 @@
-name: Build Mod
-on: [push, workflow_dispatch]
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
-      - name: Make gradlew executable
-        run: chmod +x gradlew
-      - name: Build with Gradle
-        run: ./gradlew build
-      - name: Upload Jar
-        uses: actions/upload-artifact@v4
-        with:
-          name: mod-jar
-          path: |
-            build/libs/*.jar
-            !build/libs/*-sources.jar
+
+
+Job 132481895942 in r2413399-code/breeze-auction
+
+View file .github/workflows/build.yml
+The job failed because the workflow is trying to run a Gradle wrapper script that is not present in the repository.
+
+From the job log:
+
+chmod: cannot access 'gradlew': No such file or directory
+And the workflow file shows it does:
+
+- name: Make gradlew executable
+run: chmod +x gradlew
+then ./gradlew build
+So the build is failing before Gradle can even start: the file gradlew does not exist at the repo root, which usually means the project is missing the Gradle wrapper, or the file was not committed to the branch that this workflow ran against.
